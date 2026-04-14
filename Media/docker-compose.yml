@@ -2,7 +2,6 @@ services:
   jellyfin:
     image: jellyfin/jellyfin:latest
     container_name: jellyfin
-    network_mode: bridge
     environment:
       - TZ=America/Los_Angeles
     ports:
@@ -12,11 +11,12 @@ services:
       - ./cache/jellyfin:/cache
       - ./media:/media
     restart: unless-stopped
+    networks:
+      - media_streaming
 
   plex:
     image: plexinc/pms-docker:latest
     container_name: plex
-    network_mode: bridge
     environment:
       - TZ=America/Los_Angeles
       - PLEX_CLAIM=claim-REPLACE_ME
@@ -27,11 +27,12 @@ services:
       - ./config/plex:/config
       - ./media:/media
     restart: unless-stopped
+    networks:
+      - media_streaming
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
-    network_mode: bridge
     environment:
       - TZ=America/Los_Angeles
       - LOG_LEVEL=info
@@ -40,11 +41,12 @@ services:
     volumes:
       - ./config/jellyseerr:/app/config
     restart: unless-stopped
+    networks:
+      - media_streaming
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
-    network_mode: bridge
     environment:
       - PUID=1000
       - PGID=1000
@@ -57,11 +59,12 @@ services:
       - ./media/tv:/tv
       - ./downloads:/downloads
     restart: unless-stopped
+    networks:
+      - media_streaming
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
-    network_mode: bridge
     environment:
       - PUID=1000
       - PGID=1000
@@ -74,11 +77,12 @@ services:
       - ./media/movies:/movies
       - ./downloads:/downloads
     restart: unless-stopped
+    networks:
+      - media_streaming
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
-    network_mode: bridge
     environment:
       - PUID=1000
       - PGID=1000
@@ -88,3 +92,9 @@ services:
     volumes:
       - ./config/prowlarr:/config
     restart: unless-stopped
+    networks:
+      - media_streaming
+
+networks:
+  media_streaming:
+    driver: bridge
